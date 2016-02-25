@@ -27,27 +27,26 @@ use Yii;
  * @property string $numberComein
  * @property string $requestTypeId
  */
-class RequestDetail extends \yii\db\ActiveRecord
-{
+class RequestDetail extends \yii\db\ActiveRecord {
+
     /**
      * @inheritdoc
      */
-    public static function tableName()
-    {
+    public static function tableName() {
         return 'request_detail';
     }
 
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
-            [['requestId', 'parcelId', 'parcelName', 'typeID', 'parSize', 'parUnit', 'parBrand', 'parModel', 'parPrice', 'parTotal', 'status', 'subId', 'number', 'numberReinvoice', 'numberRebuy', 'numberInvoice', 'numberComein', 'requestTypeId'], 'required'],
+            //[['requestId', 'parcelId', 'parcelName', 'typeId', 'parSize', 'parUnit', 'parBrand', 'parModel', 'parPrice', 'parTotal', 'status', 'subId', 'number', 'numberReinvoice', 'numberRebuy', 'numberInvoice', 'numberComein', 'requestTypeId'], 'required'],
+            [['requestId', 'parcelId'], 'required'],
             [['requestId', 'requestTypeId'], 'integer'],
             [['parcelId'], 'string', 'max' => 7],
             [['parcelName'], 'string', 'max' => 200],
-            [['typeID', 'parUnit', 'subId', 'number', 'numberRebuy', 'numberInvoice', 'numberComein'], 'string', 'max' => 10],
+            [['typeId', 'parUnit', 'subId', 'numberRequest', 'numberRebuy', 'numberInvoice', 'numberComein'], 'string', 'max' => 10],
             [['parSize', 'numberReinvoice'], 'string', 'max' => 15],
             [['parBrand'], 'string', 'max' => 40],
             [['parModel', 'status'], 'string', 'max' => 20],
@@ -59,14 +58,13 @@ class RequestDetail extends \yii\db\ActiveRecord
     /**
      * @inheritdoc
      */
-    public function attributeLabels()
-    {
+    public function attributeLabels() {
         return [
             'requestDetailId' => 'Request Detail ID',
             'requestId' => 'Request ID',
             'parcelId' => 'Parcel ID',
             'parcelName' => 'Parcel Name',
-            'typeID' => 'Type ID',
+            'typeId' => 'Type ID',
             'parSize' => 'Par Size',
             'parUnit' => 'Par Unit',
             'parBrand' => 'Par Brand',
@@ -75,7 +73,7 @@ class RequestDetail extends \yii\db\ActiveRecord
             'parTotal' => 'Par Total',
             'status' => 'Status',
             'subId' => 'Sub ID',
-            'number' => 'Number',
+            'numberRequest' => 'Number',
             'numberReinvoice' => 'Number Reinvoice',
             'numberRebuy' => 'Number Rebuy',
             'numberInvoice' => 'Number Invoice',
@@ -83,4 +81,5 @@ class RequestDetail extends \yii\db\ActiveRecord
             'requestTypeId' => 'Request Type ID',
         ];
     }
+
 }

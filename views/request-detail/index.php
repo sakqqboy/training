@@ -16,32 +16,30 @@ $this->params['breadcrumbs'][] = $this->title;
     <p>
         <?= Html::a('Create Request Detail', ['create'], ['class' => 'btn btn-success']) ?>
     </p>
-    <?= GridView::widget([
+    <?=
+    GridView::widget([
         'dataProvider' => $dataProvider,
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
-
-            'requestDetailId',
-            'requestId',
+            //'requestId',
             'parcelId',
             'parcelName',
-            'typeID',
             // 'parSize',
-            // 'parUnit',
+            'parUnit',
             // 'parBrand',
             // 'parModel',
             // 'parPrice',
             // 'parTotal',
             // 'status',
             // 'subId',
-            // 'number',
+            'numberRequest',
             // 'numberReinvoice',
             // 'numberRebuy',
             // 'numberInvoice',
             // 'numberComein',
-            // 'requestTypeId',
-
+            //'requestTypeId',
             ['class' => 'yii\grid\ActionColumn'],
         ],
-    ]); ?>
+    ]);
+    ?>
 </div>

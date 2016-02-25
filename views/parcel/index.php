@@ -41,9 +41,9 @@ $this->params['breadcrumbs'][] = $this->title;
             // 'par_purch',
             // 'par_invoice',
             ['class' => 'yii\grid\ActionColumn',
-                'header' => 'Actions',
-//                'template' => '{view} {update} {delete} {taking} {borrowing} {buying}',
-                'template' => '{view} {update} {delete}',
+                'header' => 'Action',
+                'template' => '{view} {update} {delete} {taking} {borrowing} {buying}',
+                //'template' => '{view} {update} {delete}',
                 'buttons' => [
                     'taking' => function($url, $model) {
                         return Html::a('<br><u>ขอเบิก</u>', ['/request/create', 'parcelId' => $model->par_id, 'requestType' => '1'], [

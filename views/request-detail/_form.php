@@ -18,7 +18,7 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'parcelName')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'typeID')->textInput(['maxlength' => true]) ?>
+    <?= $form->field($model, 'typeId')->textInput(['maxlength' => true]) ?>
 
     <?= $form->field($model, 'parSize')->textInput(['maxlength' => true]) ?>
 
@@ -36,7 +36,7 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'subId')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'number')->textInput(['maxlength' => true]) ?>
+    <?= $form->field($model, 'numberRequest')->textInput(['maxlength' => true]) ?>
 
     <?= $form->field($model, 'numberReinvoice')->textInput(['maxlength' => true]) ?>
 

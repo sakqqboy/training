@@ -16,23 +16,26 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <p>
         <?= Html::a('Update', ['update', 'id' => $model->requestDetailId], ['class' => 'btn btn-primary']) ?>
-        <?= Html::a('Delete', ['delete', 'id' => $model->requestDetailId], [
+        <?=
+        Html::a('Delete', ['delete', 'id' => $model->requestDetailId], [
             'class' => 'btn btn-danger',
             'data' => [
                 'confirm' => 'Are you sure you want to delete this item?',
                 'method' => 'post',
             ],
-        ]) ?>
+        ])
+        ?>
     </p>
 
-    <?= DetailView::widget([
+    <?=
+    DetailView::widget([
         'model' => $model,
         'attributes' => [
             'requestDetailId',
             'requestId',
             'parcelId',
             'parcelName',
-            'typeID',
+            'typeId',
             'parSize',
             'parUnit',
             'parBrand',
@@ -41,13 +44,14 @@ $this->params['breadcrumbs'][] = $this->title;
             'parTotal',
             'status',
             'subId',
-            'number',
+            'numberRequest',
             'numberReinvoice',
             'numberRebuy',
             'numberInvoice',
             'numberComein',
             'requestTypeId',
         ],
-    ]) ?>
+    ])
+    ?>
 
 </div>

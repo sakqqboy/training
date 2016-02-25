@@ -15,20 +15,26 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <p>
         <?= Html::a('Create Request', ['create'], ['class' => 'btn btn-success']) ?>
+        <?php
+        if (isset($userId)) {
+            echo $userId;
+        }
+        ?>
     </p>
-    <?= GridView::widget([
+    <?=
+    GridView::widget([
         'dataProvider' => $dataProvider,
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
-
             'requestId',
             'userId',
             'date:ntext',
             'dateApp:ntext',
-            'dateFinish:ntext',
+            //'dateFinish:ntext',
             // 'approver',
-            // 'status',
-            // 'reason:ntext',
+            'status',
+            'reason:ntext',
+            'requestTypeId',
             // 'reasonManager:ntext',
             // 'forwork',
             // 'major',
@@ -36,13 +42,17 @@ $this->params['breadcrumbs'][] = $this->title;
             // 'dateUse:ntext',
             // 'year',
             // 'term',
-            // 'number',
+            //'number',
             // 'numberReinvoice',
             // 'numberRebuy',
             // 'numberInvoice',
             // 'numberComein',
-
-            ['class' => 'yii\grid\ActionColumn'],
+            ['class' => 'yii\grid\ActionColumn',
+                'header' => 'Action',
+                //'template' => '{view} {update} {delete} {taking} {borrowing} {buying}',
+                'template' => '{view}',
+            ],
         ],
-    ]); ?>
+    ]);
+    ?>
 </div>

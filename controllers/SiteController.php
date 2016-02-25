@@ -2,7 +2,6 @@
 
 namespace app\controllers;
 
-use app\models\science;
 use Yii;
 use yii\filters\AccessControl;
 use yii\web\Controller;
@@ -47,24 +46,24 @@ class SiteController extends Controller {
     }
 
     public function actionIndex() {
+
         //Create Example
-//        $model = new \app\models\science\Appendage();
+        // $model = app\models\science\Request::find()->where("userId='" . $userId . "'")->one();
+        // return $this->render('../request\index', [
+        //          'model' => $model]);
 //        $model->appen_id = "0008";
 //        $model->appen_name = "ฝ่ายห้องปฏิบัติการวิทยาศาสตร์พื้นฐาน ทดสอบ Yii";
 //        $model->appen_boss = "bbhr";
 //        $model->save();
-//        return $this->render('index', ['model' => $model]);
-//
-        //Delete Example
+        return $this->render('index');
+//              //Delete Example
 //        $model = science\Appendage::find()->where("appen_id = '0008'")->one();
 //        $model->delete();
 //        return $this->render('index', ['model' => $model]);
 //
         //Query Example
-        $models = science\Appendage::find()->all();
-        return $this->render('index', ['models' => $models]);
-
-        return $this->render('index');
+        //$models = science\Appendage::find()->all();
+        //  return $this->render('index');
     }
 
     public function actionLogin() {

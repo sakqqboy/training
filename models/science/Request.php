@@ -27,10 +27,14 @@ use Yii;
  * @property string $numberRebuy
  * @property string $numberInvoice
  * @property string $numberComein
+ * @property string $requestTypeId
  */
 class Request extends \yii\db\ActiveRecord {
 
-    public $searchText;
+    public function attributes() {
+        // add related fields to searchable attributes
+        return array_merge(parent::attributes(), ['searchText']);
+    }
 
     /**
      * @inheritdoc
@@ -44,8 +48,11 @@ class Request extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-            [['userId', 'date', 'dateApp', 'dateFinish', 'approver', 'status', 'reason', 'reasonManager', 'forwork', 'major', 'subject', 'dateUse', 'year', 'term', 'number', 'numberReinvoice', 'numberRebuy', 'numberInvoice', 'numberComein'], 'required'],
-            [['date', 'dateApp', 'dateFinish', 'reason', 'reasonManager', 'dateUse'], 'string'],
+            //[['userId', 'date', 'dateApp', 'dateFinish', 'approver', 'status', 'reason', 'reasonManager', 'forwork', 'major', 'subject', 'dateUse', 'year', 'term', 'number', 'numberReinvoice', 'numberRebuy', 'numberInvoice', 'numberComein', 'requestTypeId'], 'required'],
+            [['requestTypeId', 'reason'], 'required'],
+            [['date', 'dateApp', 'dateFinish', 'searchText', 'returnDate'], 'safe'],
+            [['reason', 'reasonManager', 'dateUse'], 'string'],
+            [['requestTypeId'], 'integer'],
             [['userId', 'approver', 'status'], 'string', 'max' => 20],
             [['forwork'], 'string', 'max' => 40],
             [['major'], 'string', 'max' => 50],
@@ -53,7 +60,6 @@ class Request extends \yii\db\ActiveRecord {
             [['year'], 'string', 'max' => 5],
             [['term'], 'string', 'max' => 2],
             [['numberReinvoice'], 'string', 'max' => 15],
-            [['searchText'], 'safe'],
         ];
     }
 
@@ -67,6 +73,7 @@ class Request extends \yii\db\ActiveRecord {
             'date' => 'Date',
             'dateApp' => 'Date App',
             'dateFinish' => 'Date Finish',
+            'returnDate' => 'Return Date',
             'approver' => 'Approver',
             'status' => 'Status',
             'reason' => 'Reason',
@@ -82,6 +89,7 @@ class Request extends \yii\db\ActiveRecord {
             'numberRebuy' => 'Number Rebuy',
             'numberInvoice' => 'Number Invoice',
             'numberComein' => 'Number Comein',
+            'requestTypeId' => 'Request Type ID',
         ];
     }
 

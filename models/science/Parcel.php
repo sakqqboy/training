@@ -41,14 +41,15 @@ class Parcel extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-            [['par_id', 'par_name', 'type_id', 'par_size', 'par_unit', 'par_price', 'par_total', 'par_totalin', 'par_totalout', 'par_seller', 'color', 'cas_no', 'chem_name', 'par_quot', 'par_request', 'par_inspec', 'par_purch', 'par_invoice'], 'required'],
+            [['par_id', 'par_name', 'type_id', 'par_total'], 'required'],
+            [['par_total'], 'integer'],
             [['par_date'], 'safe'],
             [['par_id', 'par_totalout'], 'string', 'max' => 7],
             [['par_name'], 'string', 'max' => 50],
             [['type_id', 'par_totalin'], 'string', 'max' => 4],
             [['par_size', 'cas_no'], 'string', 'max' => 15],
             [['par_unit', 'par_quot', 'par_request', 'par_inspec', 'par_purch', 'par_invoice'], 'string', 'max' => 10],
-            [['par_price', 'par_total'], 'string', 'max' => 5],
+            [['par_price'], 'string', 'max' => 5],
             [['par_seller'], 'string', 'max' => 30],
             [['color'], 'string', 'max' => 3],
             [['chem_name'], 'string', 'max' => 20],
