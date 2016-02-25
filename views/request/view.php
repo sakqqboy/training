@@ -44,7 +44,7 @@ $this->params['breadcrumbs'][] = $this->title;
             <font size="4"><b>เหตุผลที่<?php echo $type . ' : </b></font><font size="4">' . $model->reason; ?></font>
         </div>
     </div>
-    <?php if ($userType == '0002') { ?>
+    <?php if ($right == '0002') { ?>
         <?php $form = ActiveForm::begin(); ?>
         <p>
             <?=
@@ -52,12 +52,12 @@ $this->params['breadcrumbs'][] = $this->title;
                 'dataProvider' => $dataProvider,
                 'columns' => [
                     ['class' => 'yii\grid\SerialColumn'],
-                    //'requestId',
                     'parcelId',
                     'parcelName',
                     'parSize',
                     'numberRequest',
                     'parUnit',
+                    'status',
                     [
                         'class' => 'yii\grid\CheckboxColumn',
                         'checkboxOptions' => function($model, $key, $index, $column) {
@@ -71,6 +71,28 @@ $this->params['breadcrumbs'][] = $this->title;
                     <?= Html::submitButton('อนุมัติ', ['class' => 'btn btn-success']); ?>
                 </p>
                 <?php ActiveForm::end(); ?>
+            <?php } else if ($right == '0003') {//ถ้าเป็นเจ้าหน้าที่คลังพัสดุ เพิ่มปุ่มแจ้งเตือนให้มารับของ ?>
+                <?php $form = ActiveForm::begin(); ?>
+                <p>
+                    <?=
+                    GridView::widget([
+                        'dataProvider' => $dataProvider,
+                        'columns' => [
+                            ['class' => 'yii\grid\SerialColumn'],
+                            'parcelId',
+                            'parcelName',
+                            'parSize',
+                            'numberRequest',
+                            'parUnit',
+                            'status',
+                        // ['class' => 'yii\grid\ActionColumn'],
+                        ],
+                    ]);
+                    ?>
+
+                    <?= Html::submitButton('แจ้งเตือนให้รับของ', ['class' => 'btn btn-success', 'name' => 'alert', 'value' => '1']); ?>
+                </p>
+                <?php ActiveForm::end(); ?>
             <?php } else { ?>
 
                 <?php $form = ActiveForm::begin(); ?>
@@ -80,12 +102,12 @@ $this->params['breadcrumbs'][] = $this->title;
                         'dataProvider' => $dataProvider,
                         'columns' => [
                             ['class' => 'yii\grid\SerialColumn'],
-                            //'requestId',
                             'parcelId',
                             'parcelName',
                             'parSize',
                             'numberRequest',
                             'parUnit',
+                            'status',
                         ],
                     ]);
                     ?>

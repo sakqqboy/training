@@ -37,24 +37,41 @@ class RequestController extends Controller {
      * @return mixed
      */
     public function actionIndex() {
+        $model = new \app\models\science\Parcel();
         if (isset(Yii::$app->user->identity->user_id)) {
-            if (Yii::$app->user->identity->user_id == "admin") {
+            $userType = \app\models\science\User::find()->where("user_id='" . Yii::$app->user->identity->user_id . "'")->one(); //role
+            $myAppendage = $userType->user_appendage;
+// $user = \app\models\science\User::find()->where("user_appendage='" . $myAppendage . "'")->all();
+            if ($userType->right_id == '0002') {//ถ้าเป็นหัวหน้าฝ่ายงาน
                 $dataProvider = new ActiveDataProvider([
-                    'query' => Request::find()->where(" status='wait'"),
+                    'query' => Request::find()
+                            ->join('left join', 'user', 'user.user_id=request.userId')
+                            ->where(['user.user_appendage' => $myAppendage])
                 ]);
 
                 return $this->render('index', [
-                            'dataProvider' => $dataProvider,
+                            'dataProvider' => $dataProvider
                 ]);
+            } else if ($userType->right_id == '0003') {//ถ้าเป็นเจ้าหน้าที่คลังพัสดุ
+                $dataProvider = new ActiveDataProvider([
+                    'query' => Request::find()->where("status='approved' or status='alert' or status='inprocess'")
+                ]);
+
+                return $this->render('index', [
+                            'dataProvider' => $dataProvider]);
             } else {
                 $dataProvider = new ActiveDataProvider([
-                    'query' => Request::find()->where(" status='wait' and userId='" . Yii::$app->user->identity->user_id . "'"),
+                    'query' => Request::find()->where(['userId' => Yii::$app->user->identity->user_id])
                 ]);
 
                 return $this->render('index', [
-                            'dataProvider' => $dataProvider,
-                ]);
+                            'dataProvider' => $dataProvider]);
             }
+        } else {
+// $dataProvider = new ActiveDataProvider([
+//    'query' => \app\models\science\Request::find()
+//  ]);//รอ
+// return $this->render('create', ['dataProvider' => $dataProvider]);
         }
     }
 
@@ -68,6 +85,7 @@ class RequestController extends Controller {
     public function actionView($id) {
         $model = new Request();
         $userType = \app\models\science\User::find()->where("user_id='" . Yii::$app->user->identity->user_id . "'")->one(); //role
+        $right = $userType->right_id;
         $dataProvider = new ActiveDataProvider([
             'query' => \app\models\science\RequestDetail::find(),
         ]);
@@ -85,7 +103,6 @@ class RequestController extends Controller {
                 $requestDetail->status = "approved";
                 $oldtotal = \app\models\science\parcel::find()->where("par_id='" . $selectItem . "'")->one();
                 $newtotal = $oldtotal->par_total - $requestDetail->numberRequest;
-                echo $newtotal;
                 $oldtotal->par_total = $newtotal;
                 $oldtotal->save();
                 $requestDetail->save();
@@ -103,14 +120,35 @@ class RequestController extends Controller {
                     $model->save();
                 }
             }
+            $userType = \app\models\science\User::find()->where("user_id='" . Yii::$app->user->identity->user_id . "'")->one(); //role
+            $myAppendage = $userType->user_appendage;
             $dataProvider = new ActiveDataProvider([
-                'query' => \app\models\science\Request::find()->where("status='wait'"),
+                'query' => Request::find()
+                        ->join('left join', 'user', 'user.user_id=request.userId')
+                        ->where(['user.user_appendage' => $myAppendage])
             ]);
-            return $this->render('index', ['dataProvider' => $dataProvider, 'userType' => $userType]);
-        }
-        return $this->render('view', [
-                    'model' => $this->findModel($id), 'dataProvider' => $dataProvider, 'userType' => $userType
-        ]);
+            return $this->render('index', ['dataProvider' => $dataProvider, 'right' => $right]);
+        }//===============================================================================================End approve function =========================================================
+
+        if (isset($_POST["alert"])) {//แจ้งเตือนให้ พนักงานมารับของ
+            $alert = \app\models\science\RequestDetail::find()->where("requestId='" . $_GET["id"] . "'")->all();
+            foreach ($alert as $a) {
+                $a->status = "alert";
+                $a->save();
+            }
+            $alert2 = \app\models\science\Request::find()->where("requestId='" . $_GET["id"] . "'")->one();
+            $alert2->status = "alert";
+            $alert2->save();
+            $alert = "alert";
+            $dataProvider = new ActiveDataProvider([
+                'query' => \app\models\science\Request::find()->where("status='approved' or status='alert' or status='inprocess'"),
+            ]);
+            return $this->render('index', ['model' => $this->findModel($id), 'dataProvider' => $dataProvider, 'right' => $right]);
+        } else {
+            return $this->render('view', [
+                        'model' => $this->findModel($id), 'dataProvider' => $dataProvider, 'right' => $right
+            ]);
+        }//======================================================================================End Alert function ===========================================================
     }
 
     /**
@@ -132,43 +170,44 @@ class RequestController extends Controller {
             $dataProvider = new ActiveDataProvider(['query' => \app\models\science\Parcel::find()->where("par_total>'0' order by par_id"),
             ]);
         }
-
+        if (isset(Yii::$app->user->identity->user_id)) {
 //save in to request
-        if (isset($_POST["Request"]["reason"]) && !empty($_POST["Request"]["reason"])) {
-            if (isset($_POST["selection"])) {
-                $model = new \app\models\science\Request();
-                $model->reason = $_POST["Request"]["reason"];
-                $model->date = date('Y-m-d h:i:s');
-                $model->status = "wait";
-                $model->requestTypeId = $_GET["type"];
-                $model->userId = Yii::$app->user->identity->user_id;
-                $model->save();
-                if ($model->save()) {
-                    $requestId = Yii::$app->db->lastInsertID;
-
-                    foreach ($_POST["selection"] as $selectItem) {
-                        if (isset($_POST["number"][$selectItem]) && !empty($_POST["number"][$selectItem])) {
-                            $requestDetail = new \app\models\science\RequestDetail();
-                            $requestDetail->requestId = $requestId;
-                            $requestDetail->parcelId = $selectItem;
-                            $requestDetail->numberRequest = $_POST["number"][$selectItem];
-                            $detail = \app\models\science\parcel::find()->where("par_id='" . $selectItem . "'")->one();
-                            $requestDetail->parcelName = $detail->par_name;
-                            $requestDetail->typeId = $detail->type_id;
-                            $requestDetail->parSize = $detail->par_size;
-                            $requestDetail->parUnit = $detail->par_unit;
-                            $requestDetail->parPrice = $detail->par_price;
-                            $requestDetail->parTotal = $detail->par_total;
-                            $requestDetail->status = "wait";
-                            $requestDetail->requestTypeId = $_GET["type"];
-                            $requestDetail->save();
-                        }
-                    }
-                    $dataProvider = new ActiveDataProvider(['query' => \app\models\science\Parcel::find(),]);
+            if (isset($_POST["Request"]["reason"]) && !empty($_POST["Request"]["reason"])) {
+                if (isset($_POST["selection"])) {
                     $model = new \app\models\science\Request();
-                }
-            } else {
+                    $model->reason = $_POST["Request"]["reason"];
+                    $model->date = date('Y-m-d h:i:s');
+                    $model->status = "wait";
+                    $model->requestTypeId = $_GET["type"];
+                    $model->userId = Yii::$app->user->identity->user_id;
+                    $model->save();
+                    if ($model->save()) {
+                        $requestId = Yii::$app->db->lastInsertID;
 
+                        foreach ($_POST["selection"] as $selectItem) {
+                            if (isset($_POST["number"][$selectItem]) && !empty($_POST["number"][$selectItem])) {
+                                $requestDetail = new \app\models\science\RequestDetail();
+                                $requestDetail->requestId = $requestId;
+                                $requestDetail->parcelId = $selectItem;
+                                $requestDetail->numberRequest = $_POST["number"][$selectItem];
+                                $detail = \app\models\science\parcel::find()->where("par_id='" . $selectItem . "'")->one();
+                                $requestDetail->parcelName = $detail->par_name;
+                                $requestDetail->typeId = $detail->type_id;
+                                $requestDetail->parSize = $detail->par_size;
+                                $requestDetail->parUnit = $detail->par_unit;
+                                $requestDetail->parPrice = $detail->par_price;
+                                $requestDetail->parTotal = $detail->par_total;
+                                $requestDetail->status = "wait";
+                                $requestDetail->requestTypeId = $_GET["type"];
+                                $requestDetail->save();
+                            }
+                        }
+                        $dataProvider = new ActiveDataProvider(['query' => \app\models\science\Parcel::find(),]);
+                        $model = new \app\models\science\Request();
+                    }
+                } else {
+
+                }
             }
         }
         return $this->render('create', [

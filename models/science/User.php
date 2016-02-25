@@ -22,21 +22,23 @@ use Yii;
  * @property string $user_datein
  * @property string $user_dateup
  */
-class User extends \yii\db\ActiveRecord
-{
+class User extends \yii\db\ActiveRecord {
+
     /**
      * @inheritdoc
      */
-    public static function tableName()
-    {
+    public static function tableName() {
         return 'user';
+    }
+
+    public function relations() {
+        return array('ProfileUser' => array(self::HAS_ONE, 'ProfileUser', 'user_id'),);
     }
 
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
             [['user_id', 'user_name', 'user_lastname', 'user_pass', 'user_rank', 'user_appendage', 'user_department', 'user_tel', 'user_email', 'right_id', 'user_status', 'user_ser', 'user_datein', 'user_dateup'], 'required'],
             [['user_datein', 'user_dateup'], 'safe'],
@@ -52,8 +54,7 @@ class User extends \yii\db\ActiveRecord
     /**
      * @inheritdoc
      */
-    public function attributeLabels()
-    {
+    public function attributeLabels() {
         return [
             'user_id' => 'User ID',
             'user_name' => 'User Name',
@@ -71,4 +72,5 @@ class User extends \yii\db\ActiveRecord
             'user_dateup' => 'User Dateup',
         ];
     }
+
 }

@@ -12,15 +12,6 @@ $this->params['breadcrumbs'][] = $this->title;
 <div class="request-index">
 
     <h1><?= Html::encode($this->title) ?></h1>
-
-    <p>
-        <?= Html::a('Create Request', ['create'], ['class' => 'btn btn-success']) ?>
-        <?php
-        if (isset($userId)) {
-            echo $userId;
-        }
-        ?>
-    </p>
     <?=
     GridView::widget([
         'dataProvider' => $dataProvider,
@@ -30,23 +21,10 @@ $this->params['breadcrumbs'][] = $this->title;
             'userId',
             'date:ntext',
             'dateApp:ntext',
-            //'dateFinish:ntext',
-            // 'approver',
+            'approver',
             'status',
             'reason:ntext',
             'requestTypeId',
-            // 'reasonManager:ntext',
-            // 'forwork',
-            // 'major',
-            // 'subject',
-            // 'dateUse:ntext',
-            // 'year',
-            // 'term',
-            //'number',
-            // 'numberReinvoice',
-            // 'numberRebuy',
-            // 'numberInvoice',
-            // 'numberComein',
             ['class' => 'yii\grid\ActionColumn',
                 'header' => 'Action',
                 //'template' => '{view} {update} {delete} {taking} {borrowing} {buying}',
