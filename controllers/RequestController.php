@@ -46,7 +46,8 @@ class RequestController extends Controller {
                 $dataProvider = new ActiveDataProvider([
                     'query' => Request::find()
                             ->join('left join', 'user', 'user.user_id=request.userId')
-                            ->where(['user.user_appendage' => $myAppendage])
+                            ->where("user.user_appendage='" . $myAppendage . "'and request.status!='finished'")
+                        //->where(['user.user_appendage' => $myAppendage, 'request.status' => 'finished'])
                 ]);
 
                 return $this->render('index', [
@@ -54,7 +55,7 @@ class RequestController extends Controller {
                 ]);
             } else if ($userType->right_id == '0003') {//ถ้าเป็นเจ้าหน้าที่คลังพัสดุ
                 $dataProvider = new ActiveDataProvider([
-                    'query' => Request::find()->where("status='approved' or status='alert' or status='inprocess'")
+                    'query' => Request::find()->where("status='approved' or status='alert' or status='inborrow'")
                 ]);
 
                 return $this->render('index', [
@@ -89,6 +90,7 @@ class RequestController extends Controller {
         $dataProvider = new ActiveDataProvider([
             'query' => \app\models\science\RequestDetail::find(),
         ]);
+        $msAlert = \app\models\science\Request::find()->where("requestId='" . $_GET["id"] . "'")->one();
         if (isset($_GET["id"])) {
             $dataProvider = new ActiveDataProvider(['query' => \app\models\science\RequestDetail::find()->where("requestId = '" . $_GET["id"] . "'and status!='finished'"),
             ]);
@@ -96,7 +98,7 @@ class RequestController extends Controller {
             $dataProvider = new ActiveDataProvider(['query' => \app\models\science\RequestDetail::find(),
             ]);
         }
-
+//////////////////////////////////////////////////////////////// Approve /////////////////////////////////////////////////////////////////////////////////////////////////////
         if (isset($_POST["selection"])) {
             foreach ($_POST["selection"] as $selectItem) {
                 $requestDetail = \app\models\science\RequestDetail::find()->where("requestId='" . $_GET["id"] . "' and parcelId='" . $selectItem . "'")->one();
@@ -109,11 +111,11 @@ class RequestController extends Controller {
                 $check = \app\models\science\RequestDetail::find()->where("requestId='" . $_GET["id"] . "' and status='wait'")->one();
                 if (!isset($check->status)) {
                     $model = \app\models\science\Request::find()->where("requestId='" . $_GET["id"] . "'")->one();
-                    if ($model->requestTypeId == 2) {//now + 10 days from date approved--->to be edit
-                        $timestamp = strtotime("+10 days");
-                        $returnDate = date('Y-m-d H:i:s', $timestamp);
-                        $model->returnDate = $returnDate;
-                    }
+                    /* if ($model->requestTypeId == 2) {//now + 10 days from date approved--->to be edit
+                      //$timestamp = strtotime("+10 days");
+                      //$returnDate = date('Y-m-d H:i:s', $timestamp);
+                      //$model->returnDate = $returnDate;
+                      } */
                     $model->approver = Yii::$app->user->identity->user_id;
                     $model->dateApp = date('Y-m-d H:i:s');
                     $model->status = "approved";
@@ -127,9 +129,8 @@ class RequestController extends Controller {
                         ->join('left join', 'user', 'user.user_id=request.userId')
                         ->where(['user.user_appendage' => $myAppendage])
             ]);
-            return $this->render('index', ['dataProvider' => $dataProvider, 'right' => $right]);
+            return $this->render('index', ['dataProvider' => $dataProvider, 'right' => $right, 'msAlert' => $msAlert->status]);
         }//===============================================================================================End approve function =========================================================
-
         if (isset($_POST["alert"])) {//แจ้งเตือนให้ พนักงานมารับของ
             $alert = \app\models\science\RequestDetail::find()->where("requestId='" . $_GET["id"] . "'")->all();
             foreach ($alert as $a) {
@@ -139,16 +140,57 @@ class RequestController extends Controller {
             $alert2 = \app\models\science\Request::find()->where("requestId='" . $_GET["id"] . "'")->one();
             $alert2->status = "alert";
             $alert2->save();
-            $alert = "alert";
             $dataProvider = new ActiveDataProvider([
-                'query' => \app\models\science\Request::find()->where("status='approved' or status='alert' or status='inprocess'"),
+                'query' => \app\models\science\Request::find()->where("status='approved' or status='alert' or status='inborrow'"),
             ]);
-            return $this->render('index', ['model' => $this->findModel($id), 'dataProvider' => $dataProvider, 'right' => $right]);
+            return $this->render('index', ['model' => $this->findModel($id), 'dataProvider' => $dataProvider, 'right' => $right, 'msAlert' => $msAlert->status]);
+        } else if (isset($_POST["finish"])) {//ปิดรายการ
+            $finish = \app\models\science\RequestDetail::find()->where("requestId='" . $_GET["id"] . "'")->all();
+            $borrow = \app\models\science\Request::find()->where("requestId='" . $_GET["id"] . "'")->one();
+            if ($borrow->requestTypeId == 2) {//ถ้าเป็นการยืมเปลี่ยนสถานะเป็น inborrow +กำหนดวันคืน
+                foreach ($finish as $q) {
+                    $q->status = "inborrow";
+                    $q->save();
+                }
+                $finish2 = \app\models\science\Request::find()->where("requestId='" . $_GET["id"] . "'")->one();
+                $timestamp = strtotime("+10 days");
+                $returnDate = date('Y-m-d H:i:s', $timestamp);
+                $finish2->returnDate = $returnDate;
+                $finish2->status = "inborrow";
+                $finish2->save();
+            } else {
+                foreach ($finish as $q) {
+                    $q->status = "finished";
+                    $q->save();
+                }
+                $finish2 = \app\models\science\Request::find()->where("requestId='" . $_GET["id"] . "'")->one();
+                $finish2->status = "finished";
+                $finish2->dateFinish = date('Y-m-d H:i:s');
+                $finish2->save();
+            }
+            $dataProvider = new ActiveDataProvider([
+                'query' => \app\models\science\Request::find()->where("status='approved' or status='alert' or status='inborrow'"),
+            ]);
+            return $this->render('index', ['model' => $this->findModel($id), 'dataProvider' => $dataProvider, 'right' => $right, 'msAlert' => $msAlert->status]);
+        } else if (isset($_POST["returned"])) {
+            $returned = \app\models\science\RequestDetail::find()->where("requestId='" . $_GET["id"] . "'")->all();
+            $returned2 = \app\models\science\Request::find()->where("requestId='" . $_GET["id"] . "'")->one();
+            foreach ($returned as $a) {
+                $a->status = "finished";
+                $a->save();
+            }
+            $returned2->status = "finished";
+            $returbed2->dateFinish = date('Y-m-d H:i:s');
+            $returned2->save();
+            $dataProvider = new ActiveDataProvider([
+                'query' => \app\models\science\Request::find()->where("status='approved' or status='alert' or status='inborrow'"),
+            ]);
+            return $this->render('index', ['model' => $this->findModel($id), 'dataProvider' => $dataProvider, 'right' => $right, 'msAlert' => $msAlert->status]);
         } else {
             return $this->render('view', [
-                        'model' => $this->findModel($id), 'dataProvider' => $dataProvider, 'right' => $right
+                        'model' => $this->findModel($id), 'dataProvider' => $dataProvider, 'right' => $right, 'msAlert' => $msAlert->status
             ]);
-        }//======================================================================================End Alert function ===========================================================
+        }
     }
 
     /**

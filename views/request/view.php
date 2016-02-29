@@ -71,7 +71,9 @@ $this->params['breadcrumbs'][] = $this->title;
                     <?= Html::submitButton('อนุมัติ', ['class' => 'btn btn-success']); ?>
                 </p>
                 <?php ActiveForm::end(); ?>
-            <?php } else if ($right == '0003') {//ถ้าเป็นเจ้าหน้าที่คลังพัสดุ เพิ่มปุ่มแจ้งเตือนให้มารับของ ?>
+                <?php
+            } else if ($right == '0003') { //ถ้าเป็นเจ้าหน้าที่คลังพัสดุ เพิ่มปุ่มแจ้งเตือนให้มารับของ
+                ?>
                 <?php $form = ActiveForm::begin(); ?>
                 <p>
                     <?=
@@ -85,12 +87,15 @@ $this->params['breadcrumbs'][] = $this->title;
                             'numberRequest',
                             'parUnit',
                             'status',
-                        // ['class' => 'yii\grid\ActionColumn'],
                         ],
                     ]);
                     ?>
-
-                    <?= Html::submitButton('แจ้งเตือนให้รับของ', ['class' => 'btn btn-success', 'name' => 'alert', 'value' => '1']); ?>
+                    <?php if ($msAlert == "approved") { ?>
+                        <?= Html::submitButton('แจ้งเตือนให้รับของ', ['class' => 'btn btn-success', 'name' => 'alert', 'value' => '1']); ?>
+                    <?php } else if ($msAlert == "alert") { ?>
+                        <?= Html::submitButton('รับของเรียบร้อย', ['class' => 'btn btn-success', 'name' => 'finish', 'value' => '1']); ?>
+                    <?php } else if ($msAlert == "inborrow") { ?>
+                        <?= Html::submitButton('คืนแล้ว', ['class' => 'btn btn-success', 'name' => 'returned', 'value' => '1']); ?><?php } ?>
                 </p>
                 <?php ActiveForm::end(); ?>
             <?php } else { ?>
