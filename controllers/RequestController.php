@@ -127,7 +127,8 @@ class RequestController extends Controller {
             $dataProvider = new ActiveDataProvider([
                 'query' => Request::find()
                         ->join('left join', 'user', 'user.user_id=request.userId')
-                        ->where(['user.user_appendage' => $myAppendage])
+                        //->where(['user.user_appendage' => $myAppendage])
+                        ->where("user.user_appendage='" . $myAppendage . "' and request.status!='finished'")
             ]);
             return $this->render('index', ['dataProvider' => $dataProvider, 'right' => $right, 'msAlert' => $msAlert->status]);
         }//===============================================================================================End approve function =========================================================
