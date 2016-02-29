@@ -7,6 +7,7 @@ use yii\bootstrap\Nav;
 use yii\bootstrap\NavBar;
 use yii\widgets\Breadcrumbs;
 use app\assets\AppAsset;
+use yii\helpers\ArrayHelper;
 
 AppAsset::register($this);
 ?>
@@ -26,7 +27,7 @@ AppAsset::register($this);
         <div class="wrap">
             <?php
             NavBar::begin([
-                'brandLabel' => 'My Company',
+                'brandLabel' => 'HOME',
                 'brandUrl' => Yii::$app->homeUrl,
                 'options' => [
                     'class' => 'navbar-inverse navbar-fixed-top',
@@ -38,9 +39,9 @@ AppAsset::register($this);
                     ['label' => 'ขอเบิก', 'url' => ['/request/create', 'type' => 1,]],
                     ['label' => 'ขอยืม', 'url' => ['/request/create', 'type' => 2]],
                     ['label' => 'ขอจัดซื้อ', 'url' => ['/request/create', 'type' => 3]],
-                    ['label' => 'รายการพัสดุ', 'url' => ['/parcel/index',]],
+                    ['label' => 'รายการทั้งหมด', 'url' => ['/request/index', 'type' => 'all']],
+                    ['label' => 'รายการพัสดุ', 'url' => ['/parcel/index']],
                     ['label' => 'ใบรายการ', 'url' => ['/request/index']],
-                    ['label' => 'Home', 'url' => ['/site/index']],
                     ['label' => 'About', 'url' => ['/site/about']],
                     ['label' => 'Contact', 'url' => ['/site/contact']],
                     Yii::$app->user->isGuest ? (
@@ -73,7 +74,7 @@ AppAsset::register($this);
             <div class="container">
                 <p class="pull-left">&copy; ระบบบริหารจัดการคลังพัสดุ <?php echo date('Y') ?></p>
 
-                <p class="pull-right"><?php echo Yii::powered() ?></p>
+               <!-- <p class="pull-right"><?php echo Yii::powered() ?></p>-->
             </div>
         </footer>
 

@@ -27,26 +27,13 @@ $this->params['breadcrumbs'][] = $this->title;
             'par_size',
             'par_unit',
             'par_price',
+            'par_total',
             ['class' => 'yii\grid\ActionColumn',
                 'header' => 'Action',
-                'template' => '{view} {update} {delete} {taking} {borrowing} {buying}',
-                //'template' => '{view} {update} {delete}',
-                'buttons' => [
-                    'taking' => function($url, $model) {
-                        return Html::a('<br><u>ขอเบิก</u>', ['/request/create', 'parcelId' => $model->par_id, 'type' => '1'], [
-                                    'title' => Yii::t('app', 'Change today\'s lists'),]);
-                    },
-                            'borrowing' => function($url, $model) {
-                        return Html::a('<br><u>ขอยืม</u>', ['/request/create', 'parcelId' => $model->par_id, 'type' => '2'], [
-                                    'title' => Yii::t('app', 'Change today\'s lists'),]);
-                    },
-                            'buying' => function($url, $model) {
-                        return Html::a('<br><u>จัดซื้อ</u>', ['/request/create', 'parcelId' => $model->par_id, 'type' => '3'], [
-                                    'title' => Yii::t('app', 'Change today\'s lists'),]);
-                    },
-                        ]
-                    ],
-                ],
-            ]);
-            ?>
+                'template' => '{view} {update} {delete}',
+            //'template' => '{view} {update} {delete}',
+            ],
+        ],
+    ]);
+    ?>
 </div>

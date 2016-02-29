@@ -8,7 +8,6 @@ use yii\widgets\ActiveForm;
 /* @var $this yii\web\View */
 /* @var $model app\models\science\Request */
 
-//$this->title = $model->requestId;
 $this->params['breadcrumbs'][] = ['label' => 'Requests', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
@@ -40,12 +39,23 @@ $this->params['breadcrumbs'][] = $this->title;
         </div>
     </div>
     <div class="row form-inline">
-        <div class="col-lg-10">
+        <div class="col-lg-6">
             <font size="4"><b>เหตุผลที่<?php echo $type . ' : </b></font><font size="4">' . $model->reason; ?></font>
         </div>
+        <div class="col-lg-6">
+            <font size="4"><b>กำหนดคืน<?php
+                if ($model->returnDate < date('Y-m-d')) {
+                    echo ' : </b></font><font size="4" color="red">' . $model->returnDate;
+                } else {
+                    echo ' : </b></font><font size="4" >' . $model->returnDate;
+                }
+                ?></font>
+        </div>
     </div>
-    <?php if ($right == '0002') {
-        if ($msAlert == "wait") { ?>
+    <?php
+    if ($right == '0002') {
+        if ($msAlert == "wait") {
+            ?>
                 <?php $form = ActiveForm::begin(); ?>
             <p>
                 <?=
@@ -65,15 +75,14 @@ $this->params['breadcrumbs'][] = $this->title;
                                 return ['selection', 'value' => $model->parcelId];
                             }
                                 ],
-                            // ['class' => 'yii\grid\ActionColumn'],
                             ],
                         ]);
                         ?>
                     <?= Html::submitButton('อนุมัติ', ['class' => 'btn btn-success']); ?>
                     </p>
-                    <?php ActiveForm::end(); ?>
+                        <?php ActiveForm::end(); ?>
                     <?php } else {
-                    ?>
+                        ?>
                         <?php $form = ActiveForm::begin(); ?>
                     <p>
                         <?=
@@ -93,7 +102,8 @@ $this->params['breadcrumbs'][] = $this->title;
 
                     </p>
                     <?php ActiveForm::end(); ?>
-                <?php }
+                    <?php
+                }
             } else if ($right == '0003') { //ถ้าเป็นเจ้าหน้าที่คลังพัสดุ เพิ่มปุ่มแจ้งเตือนให้มารับของ
                 ?>
                     <?php $form = ActiveForm::begin(); ?>
@@ -114,13 +124,13 @@ $this->params['breadcrumbs'][] = $this->title;
                     ?>
                     <?php if ($msAlert == "approved") { ?>
                         <?= Html::submitButton('แจ้งเตือนให้รับของ', ['class' => 'btn btn-success', 'name' => 'alert', 'value' => '1']); ?>
-                    <?php } else if ($msAlert == "alert") { ?>
-                        <?= Html::submitButton('รับของเรียบร้อย', ['class' => 'btn btn-success', 'name' => 'finish', 'value' => '1']); ?>
+                <?php } else if ($msAlert == "alert") { ?>
+                    <?= Html::submitButton('รับของเรียบร้อย', ['class' => 'btn btn-success', 'name' => 'finish', 'value' => '1']); ?>
                 <?php } else if ($msAlert == "inborrow") { ?>
                     <?= Html::submitButton('คืนแล้ว', ['class' => 'btn btn-success', 'name' => 'returned', 'value' => '1']); ?><?php } ?>
                 </p>
-                <?php ActiveForm::end(); ?>
-            <?php } else { ?>
+                    <?php ActiveForm::end(); ?>
+                <?php } else { ?>
 
                     <?php $form = ActiveForm::begin(); ?>
                 <p>

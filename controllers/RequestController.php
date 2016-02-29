@@ -42,6 +42,16 @@ class RequestController extends Controller {
             $userType = \app\models\science\User::find()->where("user_id='" . Yii::$app->user->identity->user_id . "'")->one(); //role
             $myAppendage = $userType->user_appendage;
 // $user = \app\models\science\User::find()->where("user_appendage='" . $myAppendage . "'")->all();
+            if (isset($_GET['type'])) {
+                if ($_GET['type'] == 'all') {
+                    $dataProvider = new ActiveDataProvider([
+                        'query' => Request::find()->where("userId='" . Yii::$app->user->identity->user_id . "'")]);
+                    return $this->render('index', [
+                                'dataProvider' => $dataProvider]);
+                }
+            } else {
+
+            }
             if ($userType->right_id == '0002') {//ถ้าเป็นหัวหน้าฝ่ายงาน
                 $dataProvider = new ActiveDataProvider([
                     'query' => Request::find()
@@ -69,6 +79,10 @@ class RequestController extends Controller {
                             'dataProvider' => $dataProvider]);
             }
         } else {
+            echo "กรุณา LOGIN";
+
+//readdir('site / index');
+//return $this->render('../site / index');
 // $dataProvider = new ActiveDataProvider([
 //    'query' => \app\models\science\Request::find()
 //  ]);//รอ
