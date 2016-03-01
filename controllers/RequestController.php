@@ -45,7 +45,7 @@ class RequestController extends Controller {
             if (isset($_GET['type'])) {
                 if ($_GET['type'] == 'all') {
                     $dataProvider = new ActiveDataProvider([
-                        'query' => Request::find()->where("userId='" . Yii::$app->user->identity->user_id . "'")]);
+                        'query' => Request::find()->where("userId='" . Yii::$app->user->identity->user_id . "' order by date")]);
                     return $this->render('index', [
                                 'dataProvider' => $dataProvider]);
                 }
@@ -65,7 +65,7 @@ class RequestController extends Controller {
                 ]);
             } else if ($userType->right_id == '0003') {//ถ้าเป็นเจ้าหน้าที่คลังพัสดุ
                 $dataProvider = new ActiveDataProvider([
-                    'query' => Request::find()->where("status='approved' or status='alert' or status='inborrow'")
+                    'query' => Request::find()->where("status='approved' or status='alert' or status='inborrow' order by date")
                 ]);
 
                 return $this->render('index', [

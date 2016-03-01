@@ -28,14 +28,13 @@ use yii\widgets\Pjax;
         ?>
     </h2>
 
-    <h3>รายการพัสดุ</h3>
     <?php
     //\yii\widgets\Pjax::begin(['id' => 'grid-user-pjax', 'timeout' => 5000])
     ?>
     <?php $form = ActiveForm::begin(); ?>
     <div class="row form-inline">
         <div class="col-lg-10">
-            <?= Html::activeTextInput($model, 'searchText', ['class' => 'form-control', 'placeholder' => 'ค้นหาข้อมูล...']) ?>
+            <?= Html::activeTextInput($model, 'searchText', ['class' => 'form-control', 'placeholder' => 'ค้นหาพัสดุ...']) ?>
             <?= Html::submitButton('Search', ['class' => 'btn btn-primary']) ?>
         </div>
     </div>
